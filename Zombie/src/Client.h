@@ -18,6 +18,11 @@ public:
 	bool createSocket();
 	bool connectToSrv(const std::string& srvIp, int srvPort);
 
+	bool sendToSrv(const std::string& msg);
+	
+	bool receiveFromServer();
 private:
 	SOCKET m_Client;
+
+	char m_Buf[4096];
 };

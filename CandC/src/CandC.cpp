@@ -14,13 +14,17 @@ int main()
 	{
 		while (true)
 		{
-			if (CandC.waitForConnection())
+			switch (CandC.waitForConnection())
 			{
+			case WEIRDO:
+				std::cout << "Weido tried to connect" << std::endl;
+				break;
+			case BOTMASTER: 
+				std::cout << "Botmaster connected" << std::endl;
+				break;
+			case ZOMBIE:
 				std::cout << "New Zombie" << std::endl;
-			}
-			else
-			{
-				std::cout << "couldnt accept Zombie" << std::endl;
+				break;
 			}
 		}
 	}

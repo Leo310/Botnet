@@ -42,5 +42,30 @@ bool Client::connectToSrv(const std::string& srvIp, int srvPort)
 	int connectSrv = connect(m_Client, (sockaddr*)&srvaddr, sizeof(srvaddr));
 	if (connectSrv == SOCKET_ERROR)
 		return false;
+
+	if (sendToSrv("Botmaster"))	//TODO with public key on server
+		return true;
+	else
+		return false;
+}
+
+bool Client::sendToSrv(const std::string& msg)
+{
+	int sended = send(m_Client, msg.c_str(), msg.size(), 0);
+	if (sended == SOCKET_ERROR)
+		return false;
 	return true;
+}
+
+bool Client::receiveFromServer()
+{
+	int received = recv(m_Client, m_Buf, sizeof(m_Buf), 0);
+	if (received == SOCKET_ERROR || received == 0)	//received == 0 means that the connection got closed gracefully
+		return false;
+	return true;
+}
+
+std::string Client::getMessage()
+{
+	return m_Buf;
 }
