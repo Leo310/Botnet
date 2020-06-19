@@ -1,5 +1,5 @@
 workspace "Botnet"
-	architecture "x64"
+	architecture "x86"
 
 	configurations
 	{
