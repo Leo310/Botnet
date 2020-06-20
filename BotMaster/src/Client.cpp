@@ -59,13 +59,14 @@ bool Client::sendToSrv(const std::string& msg)
 
 bool Client::receiveFromServer()
 {
+	SecureZeroMemory(m_Buf, sizeof(m_Buf));
 	int received = recv(m_Client, m_Buf, sizeof(m_Buf), 0);
 	if (received == SOCKET_ERROR || received == 0)	//received == 0 means that the connection got closed gracefully
 		return false;
 	return true;
 }
 
-std::string Client::getMessage()
+std::string Client::getSrvMsg()
 {
 	return m_Buf;
 }

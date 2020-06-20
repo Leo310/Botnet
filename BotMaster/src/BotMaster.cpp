@@ -1,6 +1,18 @@
 #include <iostream>
+#include <thread>
 
 #include "Client.h"
+
+static std::string rcvMsg;
+
+void waitingForServerMsg(Client& Botmaster)
+{
+	while (true)
+	{
+		if (Botmaster.receiveFromServer())
+			std::cout << Botmaster.getSrvMsg() << std::endl;
+	}
+}
 
 int main()
 {
@@ -16,6 +28,17 @@ int main()
 		if (Botmaster.connectToSrv("127.0.0.1", 54001))
 		{
 			std::cout << "connected" << std::endl;
+			std::thread worker(waitingForServerMsg, std::ref(Botmaster));
+			while (true)
+			{
+				std::string userInput;
+				std::getline(std::cin, userInput);
+				if (!userInput.empty())
+				{
+					Botmaster.sendToSrv(userInput);
+				}
+			}
+			worker.detach();
 		}
 		else
 		{

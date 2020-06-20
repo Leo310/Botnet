@@ -21,6 +21,7 @@ public:
 	bool sendToSrv(const std::string& msg);
 	
 	bool receiveFromServer();
+	std::string getSrvMsg();
 private:
 	SOCKET m_Client;
 
