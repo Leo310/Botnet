@@ -3,8 +3,6 @@
 
 #include "Client.h"
 
-static std::string rcvMsg;
-
 void waitingForServerMsg(Client& Botmaster)
 {
 	while (true)
@@ -25,19 +23,22 @@ int main()
 
 	if (Botmaster.createSocket())
 	{
-		if (Botmaster.connectToSrv("127.0.0.1", 54001))
+		if (Botmaster.connectToSrv("127.0.0.1", 54002))
 		{
 			std::cout << "connected" << std::endl;
 			std::thread worker(waitingForServerMsg, std::ref(Botmaster));
+			std::string userInput;
 			while (true)
 			{
-				std::string userInput;
 				std::getline(std::cin, userInput);
 				if (!userInput.empty())
 				{
-					Botmaster.sendToSrv(userInput);
+					if (userInput == "exit")
+						break;
+					Botmaster.sendToSrv(userInput.c_str(), userInput.size());
 				}
 			}
+			Botmaster.closeConnection();
 			worker.detach();
 		}
 		else
@@ -50,6 +51,5 @@ int main()
 		std::cout << "Couldnt create Socket" << std::endl;
 	}
 
-	std::cin.get();
 	return 0;
 }

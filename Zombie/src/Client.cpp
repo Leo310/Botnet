@@ -30,26 +30,43 @@ bool Client::createSocket()
 	return true;
 }
 
-bool Client::connectToSrv(const std::string& srvIp, int srvPort)
+bool Client::connectToSrv(const char* srvIp, int srvPort)
 {
 	SOCKADDR_IN srvaddr;
 	srvaddr.sin_family = AF_INET;
 	srvaddr.sin_port = htons(srvPort);
-	inet_pton(AF_INET, srvIp.c_str(), &srvaddr.sin_addr);
+	inet_pton(AF_INET, srvIp, &srvaddr.sin_addr);
 
 	int connectSrv = connect(m_Client, (sockaddr*)&srvaddr, sizeof(srvaddr));
 	if (connectSrv == SOCKET_ERROR)
 		return false;
 
-	if (!sendToSrv("Zombie"))	//TODO with public key on server
+	const char* authentification = "Zombie";
+	if (!sendToSrv(authentification, strlen(authentification)))	//TODO with public key on server
 		return false;
 
+	m_Connected = true;
 	return true;
 }
 
-bool Client::sendToSrv(const std::string& msg)
+bool Client::closeConnection()
 {
-	int sended = send(m_Client, msg.c_str(), msg.size(), 0);
+	m_Connected = false;
+	//m_Event = WSACreateEvent();
+	shutdown(m_Client, SD_SEND);
+	int disconnect = recv(m_Client, nullptr, 0, 0);
+	if (disconnect == 0)
+		std::cout << "Disconnected succesfully" << std::endl;
+	else if (disconnect == SOCKET_ERROR)
+		std::cout << "Disconnected unsuccesfully" << std::endl;
+
+	closesocket(m_Client);
+	return true;
+}
+
+bool Client::sendToSrv(const char* msg, int size)
+{
+	int sended = send(m_Client, msg, size, 0);
 	if (sended == SOCKET_ERROR)
 		return false;
 	return true;
@@ -57,14 +74,18 @@ bool Client::sendToSrv(const std::string& msg)
 
 bool Client::receiveFromServer()
 {
-	SecureZeroMemory(m_Buf, sizeof(m_Buf));
-	int received = recv(m_Client, m_Buf, sizeof(m_Buf), 0);
-	if (received == SOCKET_ERROR || received == 0)	//received == 0 means that the connection got closed gracefully
-		return false;
-	return true;
+	if (m_Connected)
+	{
+		SecureZeroMemory(m_Buf, sizeof(m_Buf));
+		int received = recv(m_Client, m_Buf, sizeof(m_Buf), 0);
+		if (received == SOCKET_ERROR || received == 0)	//received == 0 means that the connection got closed gracefully
+			return false;
+		return true;
+	}
+	return false;
 }
 
-std::string Client::getSrvMsg()
+const char* Client::getSrvMsg()
 {
 	return m_Buf;
 }

