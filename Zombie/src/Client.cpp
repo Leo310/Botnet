@@ -44,14 +44,11 @@ bool Client::connectToSrv(const char* srvIp, int srvPort)
 	const char* authentification = "Zombie";
 	if (!sendToSrv(authentification, strlen(authentification)))	//TODO with public key on server
 		return false;
-
-	m_Connected = true;
 	return true;
 }
 
 bool Client::closeConnection()
 {
-	m_Connected = false;
 	//m_Event = WSACreateEvent();
 	shutdown(m_Client, SD_SEND);
 	int disconnect = recv(m_Client, nullptr, 0, 0);
@@ -74,18 +71,15 @@ bool Client::sendToSrv(const char* msg, int size)
 
 bool Client::receiveFromServer()
 {
-	if (m_Connected)
-	{
-		SecureZeroMemory(m_Buf, sizeof(m_Buf));
-		int received = recv(m_Client, m_Buf, sizeof(m_Buf), 0);
-		if (received == SOCKET_ERROR || received == 0)	//received == 0 means that the connection got closed gracefully
-			return false;
-		return true;
-	}
-	return false;
+	SecureZeroMemory(m_Buf, sizeof(m_Buf));
+	int received = recv(m_Client, m_Buf, sizeof(m_Buf), 0);
+	if (received == SOCKET_ERROR || received == 0)	//received == 0 means that the connection gotclosed gracefully
+		return false;
+	return true;
 }
 
 const char* Client::getSrvMsg()
 {
 	return m_Buf;
 }
+

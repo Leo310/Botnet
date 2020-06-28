@@ -26,7 +26,6 @@ public:
 private:
 	SOCKET m_Client;
 
-	bool m_Connected = false;
-
+	bool m_RcvdMsg = false;
 	char m_Buf[4096];
 };
