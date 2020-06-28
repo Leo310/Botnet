@@ -17,7 +17,8 @@ public:
 
 	bool createSocket();
 	bool connectToSrv(const char* srvIp, int srvPort);
-	bool closeConnection();
+	void closeConnection1();
+	bool closeConnection2();
 
 	bool sendToSrv(const char* msg, int size);
 	bool receiveFromServer();
@@ -26,8 +27,6 @@ public:
 
 private:
 	SOCKET m_Client;
-
-	bool m_Connected = false;
 
 	char m_Buf[4096];
 };

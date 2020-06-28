@@ -40,26 +40,21 @@ bool Client::connectToSrv(const char* srvIp, int srvPort)
 	const char* authentication = "Botmaster";
 	if (sendToSrv(authentication, strlen(authentication)))	//TODO with public key on server
 	{
-		m_Connected = true;
 		return true;
 	}
 	else
 		return false;
 }
 
-bool Client::closeConnection()
+void Client::closeConnection1()
 {
-	m_Connected = false;
 	//m_Event = WSACreateEvent();
 	shutdown(m_Client, SD_SEND);
-	int disconnect = recv(m_Client, nullptr, 0, 0);
-	if(disconnect == 0)
-		std::cout << "Disconnected succesfully" << std::endl;
-	else if(disconnect == SOCKET_ERROR)
-		std::cout << "Disconnected unsuccesfully" << std::endl;
+}
 
-	closesocket(m_Client);
-	return true;
+bool Client::closeConnection2()
+{
+	return !closesocket(m_Client);
 }
 
 bool Client::sendToSrv(const char* msg , int size)
@@ -72,23 +67,20 @@ bool Client::sendToSrv(const char* msg , int size)
 
 bool Client::receiveFromServer()
 {
-	if (m_Connected)
+
+	SecureZeroMemory(m_Buf, sizeof(m_Buf));
+	int received = recv(m_Client, m_Buf, sizeof(m_Buf), 0);
+	if (received == SOCKET_ERROR)	//received == 0 means that the connection got closedgracefully
 	{
-		SecureZeroMemory(m_Buf, sizeof(m_Buf));
-		int received = recv(m_Client, m_Buf, sizeof(m_Buf), 0);
-		if (received == SOCKET_ERROR)	//received == 0 means that the connection got closed gracefully
-		{
-			std::cout << "SOCKET ERROR" << WSAGetLastError() << std::endl;
-			return false;
-		}
-		else if (received == 0)
-		{
-			std::cout << "Disconnected succesfully" << std::endl;
-			return false;
-		}
-		return true;
+		std::cout << "SOCKET ERROR" << WSAGetLastError() << std::endl;
+		return false;
 	}
-	return false;
+	else if (received == 0)
+	{
+		std::cout << "Disconnected succesfully" << std::endl;
+		return false;
+	}
+	return true;
 }
 
 const char* Client::getSrvMsg()

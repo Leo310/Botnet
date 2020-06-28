@@ -8,17 +8,18 @@
 
 static std::mutex mutexMsg;
 static std::condition_variable cvrcvMsg;
-static std::atomic<bool> rcvMsg{ false };
+static std::atomic<bool> rcvMsg(false);
 
 static std::mutex mutexInput;
 static std::condition_variable cvuserInput;
 static std::string userInput;
-static std::atomic<bool> userInputed{ false };
+static std::atomic<bool> userInputed(false);
 
+static std::atomic<bool> programClosed(false);
 
 void waitingForServerMsg(Client& Botmaster)
 {
-	while (true)
+	while (!programClosed.load())
 	{
 		std::unique_lock<std::mutex> ul(mutexMsg);
 		rcvMsg = Botmaster.receiveFromServer();
@@ -28,7 +29,7 @@ void waitingForServerMsg(Client& Botmaster)
 
 void waitingForUserInput()
 {
-	while (true)
+	while (!programClosed.load())
 	{
 		std::unique_lock<std::mutex> ul(mutexInput);
 		std::getline(std::cin, userInput);
@@ -52,7 +53,6 @@ int main()
 		{
 			std::cout << "connected" << std::endl;
 			std::thread worker1(waitingForServerMsg, std::ref(Botmaster));
-			worker1.detach();
 			std::thread worker2(waitingForUserInput);
 			worker2.detach();
 
@@ -74,7 +74,10 @@ int main()
 					cvrcvMsg.notify_one();
 				}
 			}
-			Botmaster.closeConnection();
+			Botmaster.closeConnection1();
+			programClosed = true;
+			worker1.join();
+			Botmaster.closeConnection2();
 		}
 		else
 		{
@@ -85,6 +88,6 @@ int main()
 	{
 		std::cout << "Couldnt create Socket" << std::endl;
 	}
-
+	std::cout << "shiet" << std::endl;
 	return 0;
 }
