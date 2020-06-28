@@ -1,14 +1,15 @@
 #pragma once
 
 //Packetstructure	
-#define COMMAND 0
+#define COMMAND_INDEX 0
 //wenn COMMAND = CHANGESTATE dann ist an zweiter stelle STATE
-#define STATE 1
-#define MESSAGE 1
+#define STATE_INDEX 1
+#define MESSAGE_INDEX 1
 
 //Comands
-#define CCHANGESTATE '1'
-#define CMSG '2'
+#define CEXIT '1'
+#define CCHANGESTATE '2'
+#define CMSG '3'
 
 //states
 #define STANDBY '1'
@@ -27,4 +28,8 @@ public:
 	virtual State* update() = 0;
 	virtual void run() = 0;
 
+	virtual void setExit(bool exit);
+	virtual bool getExit();
+private:
+	bool m_Exit = false;
 };

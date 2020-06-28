@@ -17,12 +17,15 @@ public:
 
 	bool createSocket();
 	bool connectToSrv(const char* srvIp, int srvPort);
-	bool closeConnection();
+	
+	void closeConnection1();
+	bool closeConnection2();
 
 	bool sendToSrv(const char* msg, int size);
 	
 	bool receiveFromServer();
 	const char* getSrvMsg();
+
 private:
 	SOCKET m_Client;
 

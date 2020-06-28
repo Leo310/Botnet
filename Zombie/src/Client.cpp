@@ -47,18 +47,15 @@ bool Client::connectToSrv(const char* srvIp, int srvPort)
 	return true;
 }
 
-bool Client::closeConnection()
+void Client::closeConnection1()
 {
 	//m_Event = WSACreateEvent();
 	shutdown(m_Client, SD_SEND);
-	int disconnect = recv(m_Client, nullptr, 0, 0);
-	if (disconnect == 0)
-		std::cout << "Disconnected succesfully" << std::endl;
-	else if (disconnect == SOCKET_ERROR)
-		std::cout << "Disconnected unsuccesfully" << std::endl;
+}
 
-	closesocket(m_Client);
-	return true;
+bool Client::closeConnection2()
+{
+	return !closesocket(m_Client);
 }
 
 bool Client::sendToSrv(const char* msg, int size)
@@ -73,8 +70,16 @@ bool Client::receiveFromServer()
 {
 	SecureZeroMemory(m_Buf, sizeof(m_Buf));
 	int received = recv(m_Client, m_Buf, sizeof(m_Buf), 0);
-	if (received == SOCKET_ERROR || received == 0)	//received == 0 means that the connection gotclosed gracefully
+	if (received == SOCKET_ERROR)	//received == 0 means that the connection got closedgracefully
+	{
+		std::cout << "SOCKET ERROR" << WSAGetLastError() << std::endl;
 		return false;
+	}
+	else if (received == 0)
+	{
+		std::cout << "Disconnected succesfully" << std::endl;
+		return false;
+	}
 	return true;
 }
 
@@ -82,4 +87,3 @@ const char* Client::getSrvMsg()
 {
 	return m_Buf;
 }
-

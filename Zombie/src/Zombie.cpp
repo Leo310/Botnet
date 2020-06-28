@@ -13,9 +13,11 @@ static std::mutex mutex;
 static bool rcvdMsg = false;
 std::string rcvMsg;
 
+static std::atomic<bool> programClosed(false);
+
 void waitingForServerMsg(Client& zombie)
 {
-	while (true)
+	while (!programClosed.load())
 	{
 		std::unique_lock<std::mutex> ul(mutex);
 		rcvdMsg = zombie.receiveFromServer();
@@ -44,8 +46,7 @@ int main()
 		{
 			std::cout << "connected" << std::endl;
 			std::thread worker(waitingForServerMsg, std::ref(Zombie));
-			worker.detach();
-			while (true)
+			while (!state->getExit())
 			{
 				{
 					std::lock_guard lock(mutex);
@@ -56,11 +57,16 @@ int main()
 						cv.notify_one();
 					}
 				}
-				//if (!rcvMsg.empty())
 
 				state = state->update();
 				state->run();
 			}
+			Zombie.closeConnection1();
+			programClosed = true;
+			cv.notify_one();
+			worker.join();
+			Zombie.closeConnection2();
+			delete state;
 		}
 		else
 		{
