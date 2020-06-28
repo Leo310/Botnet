@@ -1,13 +1,13 @@
 #include "Standby.h"
 
-extern bool rcvdMsg;
+extern std::string rcvMsg;
 
 State* Standby::update()
 {
 	State* state = this;
-	if (rcvdMsg)
+	if (!rcvMsg.empty())
 	{
-		m_SrvMsg = m_Zombie.getSrvMsg();
+		m_SrvMsg = rcvMsg.c_str();
 		if (m_SrvMsg[COMMAND] == CCHANGESTATE)
 		{
 			if(m_SrvMsg[STATE] == STANDBY)
@@ -26,5 +26,4 @@ State* Standby::update()
 void Standby::run()
 {
 	//DO nothing
-	rcvdMsg = false;
 }

@@ -1,16 +1,16 @@
 #include "Echo.h"
 
-extern bool rcvdMsg;
+extern std::string rcvMsg;
 
 State* Echo::update()
 {
 	State* state = this;
-	if (rcvdMsg)
+	if (!rcvMsg.empty())
 	{
-		m_SrvMsg = m_Zombie.getSrvMsg();
+		m_SrvMsg = rcvMsg.c_str();
 		if (m_SrvMsg[COMMAND] == CCHANGESTATE)
 		{
-			if (m_SrvMsg[STATE] == STANDBY)
+			if (m_SrvMsg[STATE] == ECHO)
 				std::cout << "Already in Echo" << std::endl;
 			else if (m_SrvMsg[STATE] == STANDBY)
 			{
@@ -25,14 +25,13 @@ State* Echo::update()
 
 void Echo::run()
 {
-	if (rcvdMsg)
+	if (!rcvMsg.empty())
 	{
-		m_SrvMsg = m_Zombie.getSrvMsg();
+		m_SrvMsg = rcvMsg.c_str();
 		if (m_SrvMsg[COMMAND] == CMSG)
 		{
 			const char* msg = &m_SrvMsg[MESSAGE];
 			m_Zombie.sendToSrv(msg, strlen(msg));
 		}
 	}
-	rcvdMsg = false;
 }

@@ -9,17 +9,17 @@
 
 static std::condition_variable cv;
 static std::mutex mutex;
-static std::atomic<bool> arcvdMsg(false);
-bool rcvdMsg = false;
+//static std::atomic<bool> arcvdMsg(false);
+static bool rcvdMsg = false;
+std::string rcvMsg;
 
 void waitingForServerMsg(Client& zombie)
 {
 	while (true)
 	{
 		std::unique_lock<std::mutex> ul(mutex);
-		arcvdMsg = zombie.receiveFromServer();
-		std::cout << "thread2 rcv" << std::endl;
-		cv.wait(ul, []() {return !arcvdMsg.load(); });
+		rcvdMsg = zombie.receiveFromServer();
+		cv.wait(ul, []() {return !rcvdMsg; });
 	}
 }
 
@@ -47,21 +47,19 @@ int main()
 			worker.detach();
 			while (true)
 			{
-				if (arcvdMsg.load())
 				{
-					std::cout << "rcv" << std::endl;
-					rcvdMsg = true;
-					arcvdMsg = false;
-					cv.notify_one();
+					std::lock_guard lock(mutex);
+					if (rcvdMsg)
+					{
+						rcvMsg = Zombie.getSrvMsg();
+						rcvdMsg = false;
+						cv.notify_one();
+					}
 				}
-				if (rcvdMsg)
-				{
-					std::cout << Zombie.getSrvMsg() << std::endl;
-					rcvdMsg = false;
-				}
-				//std::cout << "update" << std::endl;
-				//state = state->update();
-				//state->run();
+				//if (!rcvMsg.empty())
+
+				state = state->update();
+				state->run();
 			}
 		}
 		else
