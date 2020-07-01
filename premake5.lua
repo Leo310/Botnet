@@ -22,21 +22,35 @@ project "BotMaster"
 
 	files
 	{
-		"%{prj.name}/src/*.h",
-		"%{prj.name}/src/*.cpp",
+		"%{prj.location}/src/*.h",
+		"%{prj.location}/src/*.cpp",
+		"%{prj.location}/src/GUI/*.h",
+		"%{prj.location}/src/GUI/*.cpp"
 	}
 	
 
 	includedirs
 	{
+		"%{wks.location}/dependencies/GLEW/include",
+		"%{wks.location}/dependencies/GLFW/include"
 	}
 
 	libdirs
 	{
+		"%{wks.location}/dependencies/GLFW/lib-vc2019",
+		"%{wks.location}/dependencies/GLEW/lib/Release/Win32"
+	}
+
+	defines
+	{
+		"GLEW_STATIC"
 	}
 
 	links
 	{
+		"glew32s.lib",
+		"glfw3.lib",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
@@ -65,8 +79,8 @@ project "Zombie"
 
 	files
 	{
-		"%{prj.name}/src/*.h",
-		"%{prj.name}/src/*.cpp"
+		"%{prj.location}/src/*.h",
+		"%{prj.location}/src/*.cpp"
 	}
 
 	includedirs
@@ -102,8 +116,8 @@ project "Zombie"
 
 	files
 	{
-		"%{prj.name}/src/*.h",
-		"%{prj.name}/src/*.cpp"
+		"%{prj.location}/src/*.h",
+		"%{prj.location}/src/*.cpp"
 	}
 
 	includedirs
