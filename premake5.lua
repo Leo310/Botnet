@@ -22,8 +22,8 @@ project "BotMaster"
 
 	files
 	{
-		"%{prj.location}/src/*.h",
-		"%{prj.location}/src/*.cpp",
+		--"%{prj.location}/src/*.h",
+		--"%{prj.location}/src/*.cpp",
 		"%{prj.location}/src/GUI/*.h",
 		"%{prj.location}/src/GUI/*.cpp"
 	}
