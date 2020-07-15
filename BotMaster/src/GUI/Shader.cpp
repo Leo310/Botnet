@@ -111,18 +111,35 @@ void Shader::Unbind()
 
 //TOdo cache uniform location
 
-void Shader::setBool(const std::string& name, bool value) const
+void Shader::setBool(const std::string& name, bool value)
 {
-    
-    glUniform1i(glGetUniformLocation(m_Id, name.c_str()), (int)value);
+    glUniform1i(getUniformLocation(name), (int)value);
 }
 
-void Shader::setFloat(const std::string& name, float value) const
+void Shader::setFloat(const std::string& name, float value)
 {
-    glUniform1f(glGetUniformLocation(m_Id, name.c_str()), value);
+    glUniform1f(getUniformLocation(name), value);
 }
 
-void Shader::setInt(const std::string& name, int value) const
+void Shader::setInt(const std::string& name, int value)
 {
-    glUniform1i(glGetUniformLocation(m_Id, name.c_str()), value);
+    glUniform1i(getUniformLocation(name), value);
+}
+
+void Shader::setMat4(const std::string& name, glm::mat4 matrix)
+{
+    glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+int Shader::getUniformLocation(const std::string& name)
+{
+    if (uniformcache.find(name) != uniformcache.end())
+        return uniformcache[name];
+
+    GLCall(int location = glGetUniformLocation(m_Id, name.c_str()));
+    if (location == -1)
+        std::cout << "Warning: uniform '" << name << "' doesnt exist" << std::endl;
+
+    uniformcache[name] = location;
+    return location;
 }

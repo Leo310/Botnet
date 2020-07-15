@@ -24,8 +24,11 @@ project "BotMaster"
 	{
 		--"%{prj.location}/src/*.h",
 		--"%{prj.location}/src/*.cpp",
-		"%{prj.location}/src/GUI/*.h",
-		"%{prj.location}/src/GUI/*.cpp"
+		"%{prj.location}/src/GUI/vendor/glm/**.hpp",
+		"%{prj.location}/src/GUI/vendor/stb_image/**.h",
+		"%{prj.location}/src/GUI/vendor/stb_image/**.cpp",
+		"%{prj.location}/src/GUI/*.cpp",
+		"%{prj.location}/src/GUI/*.h"
 	}
 	
 
