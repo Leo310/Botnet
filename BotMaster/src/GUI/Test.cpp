@@ -4,9 +4,9 @@
 #include "Shader.h"
 #include "vendor/stb_image/stb_image.h"
 
-#include "vendor/GLM/glm.hpp"
-#include "vendor/GLM/gtc/matrix_transform.hpp"
-#include "vendor/GLM/gtc/type_ptr.hpp"
+#include "vendor/glm/glm/glm.hpp"
+#include "vendor/glm/glm/gtc/matrix_transform.hpp"
+#include "vendor/glm/glm/gtc/type_ptr.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {

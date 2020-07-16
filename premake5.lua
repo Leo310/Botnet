@@ -34,14 +34,14 @@ project "BotMaster"
 
 	includedirs
 	{
-		"%{wks.location}/dependencies/GLEW/include",
-		"%{wks.location}/dependencies/GLFW/include"
+		"%{wks.location}/BotMaster/src/GUI/vendor/GLEW/include",
+		"%{wks.location}/BotMaster/src/GUI/vendor/GLFW/include"
 	}
 
 	libdirs
 	{
-		"%{wks.location}/dependencies/GLFW/lib-vc2019",
-		"%{wks.location}/dependencies/GLEW/lib/Release/Win32"
+		"%{wks.location}/BotMaster/src/GUI/vendor/GLFW/lib-vc2019",
+		"%{wks.location}/BotMaster/src/GUI/vendor/GLEW/lib/Release/Win32"
 	}
 
 	defines

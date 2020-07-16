@@ -8,9 +8,9 @@
 #include <unordered_map>
 #include <string>
 
-#include "vendor/GLM/glm.hpp"
-#include "vendor/GLM/gtc/matrix_transform.hpp"
-#include "vendor/GLM/gtc/type_ptr.hpp"
+#include "vendor/glm/glm/glm.hpp"
+#include "vendor/glm/glm/gtc/matrix_transform.hpp"
+#include "vendor/glm/glm/gtc/type_ptr.hpp"
 
 #define ASSERT(x) if(!(x)) __debugbreak();
 #define GLCall(x) GLClearError();\
