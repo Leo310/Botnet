@@ -1,3 +1,0 @@
-[submodule "BotMaster/src/GUI/vendor/glm"]
-	path = BotMaster/src/GUI/vendor/glm
-	url = https://github.com/g-truc/glm.git
