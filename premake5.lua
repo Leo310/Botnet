@@ -24,24 +24,27 @@ project "BotMaster"
 	{
 		--"%{prj.location}/src/*.h",
 		--"%{prj.location}/src/*.cpp",
-		"%{prj.location}/src/GUI/vendor/glm/**.hpp",
-		"%{prj.location}/src/GUI/vendor/stb_image/**.h",
-		"%{prj.location}/src/GUI/vendor/stb_image/**.cpp",
-		"%{prj.location}/src/GUI/*.cpp",
-		"%{prj.location}/src/GUI/*.h"
+		"%{prj.location}/src/BotMaster/GUI/vendor/glm/**.hpp",
+		"%{prj.location}/src/BotMaster/GUI/vendor/stb_image/**.h",
+		"%{prj.location}/src/BotMaster/GUI/vendor/stb_image/**.cpp",
+		"%{prj.location}/src/BotMaster/GUI/src/**.cpp",
+		"%{prj.location}/src/BotMaster/GUI/src/**.h"
 	}
 	
 
 	includedirs
 	{
-		"%{wks.location}/BotMaster/src/GUI/vendor/GLEW/include",
-		"%{wks.location}/BotMaster/src/GUI/vendor/GLFW/include"
+		"%{wks.location}/BotMaster/src/BotMaster/GUI/vendor/GLEW/include",
+		"%{wks.location}/BotMaster/src/BotMaster/GUI/vendor/GLFW/include",
+		"%{wks.location}/BotMaster/src/BotMaster/GUI/vendor/glm",
+		"%{wks.location}/BotMaster/src/BotMaster/GUI/vendor/stb_image",
+		"%{wks.location}/BotMaster/src/BotMaster/GUI"
 	}
 
 	libdirs
 	{
-		"%{wks.location}/BotMaster/src/GUI/vendor/GLFW/lib-vc2019",
-		"%{wks.location}/BotMaster/src/GUI/vendor/GLEW/lib/Release/Win32"
+		"%{wks.location}/BotMaster/src/BotMaster/GUI/vendor/GLFW/lib-vc2019",
+		"%{wks.location}/BotMaster/src/BotMaster/GUI/vendor/GLEW/lib/Release/Win32"
 	}
 
 	defines
