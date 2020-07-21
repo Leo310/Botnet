@@ -1,6 +1,7 @@
 #include "BMpch.h"
 #include "Buffer.h"
 
+#include "BotMaster/Core/Base.h"
 #include "Renderer.h"
 #include "Platform - API/OpenGL/OpenGLBuffer.h"
 
@@ -15,12 +16,12 @@ namespace GUI
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::NONE:
-			assert(false, "RendererAPI::NONE is currently not supported");
+			BM_ASSERT(false, "RendererAPI::NONE is currently not supported")
 			return nullptr;
 		case RendererAPI::OpenGL: return new OpenGLVertexBuffer(vertices, size);
 		}
 
-		assert(false, "Unknown RendererAPI");
+		BM_ASSERT(false, "Unknown RendererAPI")
 		return nullptr;
 	}
 
@@ -33,12 +34,12 @@ namespace GUI
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::NONE:
-			assert(false, "RendererAPI::NONE is currently not supported");
+			BM_ASSERT(false, "RendererAPI::NONE is currently not supported")
 			return nullptr;
 		case RendererAPI::OpenGL: return new OpenGLIndexBuffer(indices, count);
 		}
 
-		assert(false, "Unknown RendererAPI");
+		BM_ASSERT(false, "Unknown RendererAPI")
 		return nullptr;
 	}
 }

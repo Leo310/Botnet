@@ -1,5 +1,5 @@
 #include "BMpch.h"
-#include "Base.h"
+#include "OpenGLBase.h"
 
 void GLClearError()
 {

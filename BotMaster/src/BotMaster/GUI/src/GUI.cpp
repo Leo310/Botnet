@@ -1,6 +1,7 @@
 #include "BMpch.h"
-
 #include "GUI.h"
+
+#include "BotMaster/Core/Base.h"
 
 namespace GUI
 {
@@ -15,32 +16,22 @@ namespace GUI
 
 	int GUI::Init()
 	{
-		if (!glfwInit())
-		{
-			std::cout << "couldnt init glfw" << std::endl;
-			return 0;
-		}
+		int success = glfwInit();
+		BM_ASSERT(success, "Couldnt inít GLFW")
+
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		m_Window = glfwCreateWindow(m_Width, m_Height, m_Title, NULL, NULL);
-		if (!m_Window)
-		{
-			std::cout << "couldnt create window" << std::endl;
-			glfwTerminate();
-			return 0;
-		}
+		BM_ASSERT(m_Window, "Window couldnt be created")
+		BM_LOG_INFO("Created Window")
 
 		glfwMakeContextCurrent(m_Window);
 
-		if (glewInit() != GLEW_OK)
-		{
-			std::cout << "glew Error!" << std::endl;
-			glfwTerminate();
-			return 0;
-		}
+		success != glewInit();
+		BM_ASSERT(success, "Coudlnt init GLEW")
 
 		glfwSwapInterval(1);
 		/*

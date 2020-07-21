@@ -1,24 +1,17 @@
 #include "BMpch.h"
 #include "GUI.h"
-#include "BotMaster/Core/Log.h"
+
+#include "BotMaster/Core/Base.h"
 
 int main()
 {
 	{
 		Log::Init();
-		CORE_INFO("Initialized Log!");
-		CORE_WARN("Warn");
-		CORE_ERROR("Error!");
-
+		BM_LOG_ERROR("test");
 		GUI::GUI gui(1920, 1080, "Botmaster");
-		if (!gui.Init())
-		{
-			std::cout << "Couldnt init GUI" << std::endl;
-			std::cin.get();
-			return -1;
-		}
 
-	
+		int success = gui.Init();
+		BM_ASSERT(success, "Couldnt init GUI")
 
 		while (!glfwWindowShouldClose(gui.getWindow()))
 		{

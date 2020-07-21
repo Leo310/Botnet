@@ -2,7 +2,7 @@
 
 #include "OpenGLShader.h"
 
-#include "Base.h"
+#include "OpenGLBase.h"
 
 namespace GUI
 {
