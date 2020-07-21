@@ -9,14 +9,6 @@
 
 #include "stb_image.h"
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <fstream>
-#include <vector>
-#include <unordered_map>
-
-
 #define ASSERT(x) if(!(x)) __debugbreak();
 #define GLCall(x) GLClearError();\
     x;\

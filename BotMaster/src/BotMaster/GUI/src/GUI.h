@@ -1,48 +1,51 @@
 #pragma once
 
-#include "Base.h"
+#include "Platform - API/OpenGL/Base.h"
 
-#include "OpenGL/VertexArray.h"
-#include "OpenGL/Shader.h"
-#include "OpenGL/Texture.h"
 #include "PerspectiveCamera.h"
 
-#include "Quad.h"
+#include "Renderer/Buffer.h"
+#include "Renderer/ResourceManager.h"
+#include "Renderer/Shader.h"
 
-enum class GUIState
+namespace GUI
 {
-	ACTIVE = 1
-};
+	enum class GUIState
+	{
+		ACTIVE = 1
+	};
 
-class GUI
-{
-public:
-	GUI(int width, int height, const char* name);
-	~GUI();
+	class GUI
+	{
+	public:
+		GUI(int width, int height, const char* name);
+		~GUI();
 
-	int Init();
-	void update();
-	void render();
+		int Init();
+		void update();
+		void render();
 
-	GLFWwindow* getWindow();
-	int getWidht();
-	int getHeight();
+		GLFWwindow* getWindow();
+		int getWidht();
+		int getHeight();
 
-private:
+	private:
 
-	GLFWwindow* m_Window;
-	int m_Width, m_Height;
-	const char* m_Title;
+		GLFWwindow* m_Window;
+		int m_Width, m_Height;
+		const char* m_Title;
 
-	GUIState m_State;
+		GUIState m_State;
 
-	//Testing
-	Shader shader;
-	PerspectiveCamera cam;
-	Quad quad;
+		//Testing
+		PerspectiveCamera cam;
 
+		std::unique_ptr<VertexBuffer> vertexBuffer;
+		std::unique_ptr<IndexBuffer> indexBuffer;
+		std::unique_ptr<RecourceManager> rManage;
 
-	float lastTime = 0.0f;
-	float deltaTime = 0.0f;
+		float lastTime = 0.0f;
+		float deltaTime = 0.0f;
 
-};
+	};
+}
