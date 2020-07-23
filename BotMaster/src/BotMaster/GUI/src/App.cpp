@@ -5,24 +5,18 @@
 
 int main()
 {
+	
+	Log::Init();
+	GUI::GUI gui(1920, 1080, "Botmaster");
+	gui.Init();
+
+
+	while (!gui.Exit())
 	{
-		Log::Init();
-		BM_LOG_ERROR("test");
-		GUI::GUI gui(1920, 1080, "Botmaster");
-
-		int success = gui.Init();
-		BM_ASSERT(success, "Couldnt init GUI")
-
-		while (!glfwWindowShouldClose(gui.getWindow()))
-		{
-			//gui.update();
-			gui.render();
-
-		}
+		//gui.update();
+		gui.Render();
 
 	}
-	glfwTerminate();
-
 	return 0;
 }
 

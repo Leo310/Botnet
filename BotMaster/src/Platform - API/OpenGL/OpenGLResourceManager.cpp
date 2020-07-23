@@ -1,6 +1,7 @@
 #include "BMpch.h"
 
 #include "OpenGLResourceManager.h"
+#include "OpenGLBase.h"
 
 
 namespace GUI
@@ -43,7 +44,7 @@ namespace GUI
         }
         catch (std::exception e)
         {
-            std::cout << "ERROR::SHADER: Failed to read shader files" << std::endl;
+            BM_LOG_ERROR("ERROR::SHADER: Failed to read shader files");
         }
         
         return Code;

@@ -41,7 +41,7 @@
 #error "Unknown platform!"
 #endif // End of platform detection
 
-#ifdef DEBUG
+#ifdef BM_DEBUG
 #if defined(BM_PLATFORM_WINDOWS)
 #define BM_DEBUGBREAK() __debugbreak()
 #elif defined(BM_PLATFORM_LINUX)
@@ -58,7 +58,7 @@
 #include "Log.h"
 // TODO: Make this macro able to take in no arguments except condition
 #ifdef BM_ENABLE_ASSERTS
-#define BM_ASSERT(x, ...) { if(!(x)) { BM_LOG_ERROR("Assertion Failed: {0}", __VA_ARGS__) BM_DEBUGBREAK(); } }
+#define BM_ASSERT(x, ...) { if(!(x)) { BM_LOG_ERROR("Assertion Failed: {0}", __VA_ARGS__); BM_DEBUGBREAK(); } } static_assert(true, "semi-colon required after this macro")
 
 #else
 #define BM_ASSERT(x, ...)

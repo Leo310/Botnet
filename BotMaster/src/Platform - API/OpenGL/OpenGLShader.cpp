@@ -20,7 +20,7 @@ namespace GUI
         if (!success) {
             char infoLog[512];
             glGetProgramInfoLog(m_RendererId, 512, NULL, infoLog);
-            std::cout << "shaderprogram failed " << infoLog << std::endl;
+            BM_LOG_ERROR("Shaderprogram failed {1}", infoLog);
         }
         GLCall(glValidateProgram(m_RendererId));
         GLCall(glDeleteShader(vertexShader));
@@ -54,7 +54,9 @@ namespace GUI
         {
             char infoLog[512];
             glGetShaderInfoLog(shader, 512, NULL, infoLog);
-            std::cout << "Shadercompilation failed " << infoLog << std::endl;
+
+            BM_LOG_ERROR("Shadercompilation failed {1}", infoLog);
+
             return 0;
         }
 
@@ -90,7 +92,7 @@ namespace GUI
 
         GLCall(int location = glGetUniformLocation(m_RendererId, name));
         if (location == -1)
-            std::cout << "Warning: uniform '" << name << "' doesnt exist" << std::endl;
+            BM_LOG_WARN("Uniform '{1}' doesnt exist", name);
 
         m_Uniformcache[name] = location;
         return location;

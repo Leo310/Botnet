@@ -6,8 +6,8 @@
 namespace GUI
 {
 	GUI::GUI(int width, int height, const char* name)
-		: m_Window(0), m_Width(width), m_Height(height), m_Title(name), m_State(GUIState::ACTIVE)
 	{
+		window.reset(Window::Create(WindowProperties(name, width, height, true)));
 	}
 
 	GUI::~GUI()
@@ -16,24 +16,6 @@ namespace GUI
 
 	int GUI::Init()
 	{
-		int success = glfwInit();
-		BM_ASSERT(success, "Couldnt inít GLFW")
-
-
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-		m_Window = glfwCreateWindow(m_Width, m_Height, m_Title, NULL, NULL);
-		BM_ASSERT(m_Window, "Window couldnt be created")
-		BM_LOG_INFO("Created Window")
-
-		glfwMakeContextCurrent(m_Window);
-
-		success != glewInit();
-		BM_ASSERT(success, "Coudlnt init GLEW")
-
-		glfwSwapInterval(1);
 		/*
 		glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
 		glfwSetKeyCallback(m_Window, key_callback);
@@ -91,7 +73,7 @@ namespace GUI
 		return 1;
 	}
 
-	void GUI::update()
+	void GUI::Update()
 	{
 		float time = glfwGetTime();
 		deltaTime = time - lastTime;
@@ -121,7 +103,7 @@ namespace GUI
 			glfwSetWindowShouldClose(m_Window, true);*/
 	}
 
-	void GUI::render()
+	void GUI::Render()
 	{
 		GLCall(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
@@ -129,23 +111,11 @@ namespace GUI
 		//shader.bind();
 		rManage->GetShader("test")->Bind();
 		GLCall(glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, 0));
-
-		glfwSwapBuffers(m_Window);
-		glfwPollEvents();
+		window->Update(); 
 	}
 
-	GLFWwindow* GUI::getWindow()
+	bool GUI::Exit() const
 	{
-		return m_Window;
-	}
-
-	int GUI::getWidht()
-	{
-		return m_Width;
-	}
-
-	int GUI::getHeight()
-	{
-		return m_Height;
+		return window->Exit();
 	}
 }

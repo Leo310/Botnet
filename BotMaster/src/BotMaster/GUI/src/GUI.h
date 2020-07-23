@@ -7,14 +7,10 @@
 #include "Renderer/Buffer.h"
 #include "Renderer/ResourceManager.h"
 #include "Renderer/Shader.h"
+#include "Window.h"
 
 namespace GUI
 {
-	enum class GUIState
-	{
-		ACTIVE = 1
-	};
-
 	class GUI
 	{
 	public:
@@ -22,24 +18,19 @@ namespace GUI
 		~GUI();
 
 		int Init();
-		void update();
-		void render();
+		void Update();
+		void Render();
 
-		GLFWwindow* getWindow();
-		int getWidht();
-		int getHeight();
+		bool Exit() const;
 
 	private:
-
-		GLFWwindow* m_Window;
-		int m_Width, m_Height;
-		const char* m_Title;
-
-		GUIState m_State;
 
 		//Testing
 		PerspectiveCamera cam;
 
+		bool m_Exit = false;
+
+		std::unique_ptr<Window> window;
 		std::unique_ptr<VertexBuffer> vertexBuffer;
 		std::unique_ptr<IndexBuffer> indexBuffer;
 		std::unique_ptr<RecourceManager> rManage;

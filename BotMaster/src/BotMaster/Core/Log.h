@@ -14,8 +14,8 @@ private:
 };
 
 //Core log macros
-#define BM_LOG_TRACE(...) ::Log::GetLogger()->trace(__VA_ARGS__);
-#define BM_LOG_INFO(...)  ::Log::GetLogger()->info(__VA_ARGS__);
-#define BM_LOG_WARN(...)  ::Log::GetLogger()->warn(__VA_ARGS__);
-#define BM_LOG_ERROR(...) ::Log::GetLogger()->error(__VA_ARGS__);
-#define BM_LOG_CRITICAL(...) ::Log::GetLogger()->critical(__VA_ARGS__);
+#define BM_LOG_TRACE(...) ::Log::GetLogger()->trace(__VA_ARGS__)
+#define BM_LOG_INFO(...)  ::Log::GetLogger()->info(__VA_ARGS__)
+#define BM_LOG_WARN(...)  ::Log::GetLogger()->warn(__VA_ARGS__)
+#define BM_LOG_ERROR(...) ::Log::GetLogger()->error(__VA_ARGS__)
+#define BM_LOG_CRITICAL(...) ::Log::GetLogger()->critical(__VA_ARGS__)

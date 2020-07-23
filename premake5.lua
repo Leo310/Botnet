@@ -30,8 +30,8 @@ project "BotMaster"
 		"%{prj.location}/vendor/glm/**.hpp",
 		"%{prj.location}/vendor/stb_image/**.h",
 		"%{prj.location}/vendor/stb_image/**.cpp",
-		"%{prj.location}/src/Platform - API/OpenGL/*.h",
-		"%{prj.location}/src/Platform - API/OpenGL/*.cpp",
+		"%{prj.location}/src/Platform - API/**.h",
+		"%{prj.location}/src/Platform - API/**.cpp",
 		"%{prj.location}/src/BotMaster/GUI/src/**.cpp",
 		"%{prj.location}/src/BotMaster/GUI/src/**.h",
 		"%{prj.location}/src/BotMaster/Core/**.cpp",
@@ -78,11 +78,11 @@ project "BotMaster"
 
 
 	filter "configurations:Debug"
-		defines "DEBUG"
+		defines "BM_DEBUG"
 		symbols "On"
 
 	filter "configurations:Release"
-		defines "RELEASE"
+		defines "BM_RELEASE"
 		optimize "On"
 
 
@@ -116,11 +116,11 @@ project "Zombie"
 
 
 	filter "configurations:Debug"
-		defines "DEBUG"
+		defines "Z_DEBUG"
 		symbols "On"
 
 	filter "configurations:Release"
-		defines "RELEASE"
+		defines "Z_RELEASE"
 		optimize "On"
  
  project "CandC"
@@ -153,9 +153,9 @@ project "Zombie"
 
 
 	filter "configurations:Debug"
-		defines "DEBUG"
+		defines "CC_DEBUG"
 		symbols "On"
 
 	filter "configurations:Release"
-		defines "RELEASE"
+		defines "CC_RELEASE"
 		optimize "On"
