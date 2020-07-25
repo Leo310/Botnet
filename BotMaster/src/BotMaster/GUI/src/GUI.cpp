@@ -119,6 +119,14 @@ namespace GUI
 	}
 	void GUI::OnEvent(Event& e)
 	{
-		BM_LOG_INFO("{0}", e.ToString());
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClosed));
+		BM_LOG_TRACE("{0}", e.ToString());
+	}
+
+	bool GUI::OnWindowClosed(WindowCloseEvent& e)
+	{
+		m_Running = false;
+		return true;
 	}
 }

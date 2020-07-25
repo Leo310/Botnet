@@ -8,7 +8,9 @@
 #include "Renderer/ResourceManager.h"
 #include "Renderer/Shader.h"
 #include "Window.h"
+
 #include "Events/Event.h"
+#include "Events/ApplicationEvent.h"
 
 namespace GUI
 {
@@ -27,6 +29,7 @@ namespace GUI
 		inline bool IsRunning() const { return m_Running; };
 
 	private:
+		bool OnWindowClosed(WindowCloseEvent& e);
 
 		//Testing
 		PerspectiveCamera cam;
