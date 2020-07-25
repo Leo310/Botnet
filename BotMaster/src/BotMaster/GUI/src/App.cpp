@@ -11,7 +11,7 @@ int main()
 	gui.Init();
 
 
-	while (!gui.Exit())
+	while (gui.IsRunning())
 	{
 		//gui.update();
 		gui.Render();

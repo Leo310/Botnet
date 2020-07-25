@@ -8,6 +8,7 @@
 #include "Renderer/ResourceManager.h"
 #include "Renderer/Shader.h"
 #include "Window.h"
+#include "Events/Event.h"
 
 namespace GUI
 {
@@ -21,14 +22,16 @@ namespace GUI
 		void Update();
 		void Render();
 
-		bool Exit() const;
+		void OnEvent(Event& e);
+
+		inline bool IsRunning() const { return m_Running; };
 
 	private:
 
 		//Testing
 		PerspectiveCamera cam;
 
-		bool m_Exit = false;
+		bool m_Running = true;
 
 		std::unique_ptr<Window> window;
 		std::unique_ptr<VertexBuffer> vertexBuffer;

@@ -13,21 +13,26 @@ namespace GUI
 
 		virtual void Update() override;
 
-		virtual unsigned int getWidth() const override { return m_WindowProperties.Width; };
-		virtual unsigned int getHeight() const override { return m_WindowProperties.Height; };
+		virtual unsigned int getWidth() const override { return m_Data.Width; };
+		virtual unsigned int getHeight() const override { return m_Data.Height; };
 
+		virtual void SetEventCallback(const EventCallbackFn& callback) ;
 		virtual void SetVSync(bool enabled) override;
 		virtual bool IsVSync() const override;
-
-		virtual bool Exit() const override { return m_Exit; };
-
 	private:
 		void Init(const WindowProperties& props);
 		void Shutdown();
 
-		bool m_Exit = false;
-
 		GLFWwindow* m_Window;
-		WindowProperties m_WindowProperties;
+		struct WindowData
+		{
+			std::string Title;
+			unsigned int Width, Height;
+			bool VSync;
+
+			EventCallbackFn EventCallback;
+		};
+
+		WindowData m_Data;
 	};
 }

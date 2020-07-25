@@ -5,9 +5,13 @@
 
 namespace GUI
 {
+
+#define BIND_EVENT_FN(x) std::bind(&GUI::x, this, std::placeholders::_1)
+
 	GUI::GUI(int width, int height, const char* name)
 	{
 		window.reset(Window::Create(WindowProperties(name, width, height, true)));
+		window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 	}
 
 	GUI::~GUI()
@@ -113,9 +117,8 @@ namespace GUI
 		GLCall(glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, 0));
 		window->Update(); 
 	}
-
-	bool GUI::Exit() const
+	void GUI::OnEvent(Event& e)
 	{
-		return window->Exit();
+		BM_LOG_INFO("{0}", e.ToString());
 	}
 }
