@@ -3,6 +3,25 @@
 
 #include "BotMaster/Core/Base.h"
 
+class ExampleLayer : public GUI::Layer
+{
+public:
+	ExampleLayer()
+		: Layer("Example")
+	{
+	}
+
+	void Update() override
+	{
+		BM_LOG_INFO("update {0}", GetName());
+	}
+
+	void OnEvent(GUI::Event& event) override
+	{
+		BM_LOG_TRACE("ExampleLayer {0}", event.ToString());
+	}
+};
+
 namespace GUI
 {
 
@@ -74,6 +93,8 @@ namespace GUI
 		rManage.reset(RecourceManager::Create());
 		rManage->LoadShader("src/BotMaster/GUI/assets/Shaders/Vertex.shader", "src/BotMaster/GUI/assets/Shaders/Fragment.shader", "test");
 
+		layerstack.PushLayer(new ExampleLayer());
+
 		return 1;
 	}
 
@@ -113,15 +134,25 @@ namespace GUI
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 		//texture1.bind();
 		//shader.bind();
+		for (Layer* layer : layerstack)
+			layer->Update();
 		rManage->GetShader("test")->Bind();
 		GLCall(glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, 0));
 		window->Update(); 
 	}
+
 	void GUI::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClosed));
-		BM_LOG_TRACE("{0}", e.ToString());
+		//BM_LOG_TRACE("Core {0}", e.ToString());
+
+		for (auto it = layerstack.end(); it != layerstack.begin(); )
+		{
+			(*--it)->OnEvent(e);
+			if (e.Handled)
+				break;
+		}
 	}
 
 	bool GUI::OnWindowClosed(WindowCloseEvent& e)

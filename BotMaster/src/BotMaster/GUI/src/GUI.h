@@ -12,6 +12,8 @@
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 
+#include "LayerStack.h"
+
 namespace GUI
 {
 	class GUI
@@ -35,6 +37,8 @@ namespace GUI
 		PerspectiveCamera cam;
 
 		bool m_Running = true;
+
+		LayerStack layerstack;
 
 		std::unique_ptr<Window> window;
 		std::unique_ptr<VertexBuffer> vertexBuffer;
