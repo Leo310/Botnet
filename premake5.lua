@@ -10,6 +10,12 @@ workspace "Botnet"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+group "BM Dependencies"
+include "BotMaster/vendor/imgui"
+include "BotMaster/vendor/glfw"
+
+group ""
+
 project "BotMaster"
 	location "BotMaster"
 	kind "ConsoleApp"
@@ -45,17 +51,19 @@ project "BotMaster"
 	includedirs
 	{
 		"%{wks.location}/BotMaster/vendor/GLEW/include",
-		"%{wks.location}/BotMaster/vendor/GLFW/include",
+		"%{wks.location}/BotMaster/vendor/glfw/include",
 		"%{wks.location}/BotMaster/vendor/glm",
 		"%{wks.location}/BotMaster/vendor/spdlog/include",
 		"%{wks.location}/BotMaster/vendor/stb_image",
+		"%{wks.location}/BotMaster/vendor/imgui",
 		"%{wks.location}/BotMaster/src/BotMaster/GUI",
 		"%{prj.location}/src"
 	}
 
 	libdirs
 	{
-		"%{wks.location}/BotMaster/vendor/GLFW/lib-vc2019",
+		"%{wks.location}/BotMaster/vendor/glfw/bin/".. outputdir,
+		"%{wks.location}/BotMaster/vendor/imgui/bin/".. outputdir,
 		"%{wks.location}/BotMaster/vendor/GLEW/lib/Release/Win32"
 	}
 
@@ -67,6 +75,7 @@ project "BotMaster"
 	links
 	{
 		"glew32s.lib",
+		"imgui.lib",
 		"glfw3.lib",
 		"opengl32.lib",
 		"ws2_32.lib"

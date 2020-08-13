@@ -4,3 +4,9 @@
 [submodule "BotMaster/vendor/spdlog"]
 	path = BotMaster/vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "BotMaster/vendor/imgui"]
+	path = BotMaster/vendor/imgui
+	url = https://github.com/Leo310/imgui.git
+[submodule "BotMaster/vendor/glfw"]
+	path = BotMaster/vendor/glfw
+	url = https://github.com/Leo310/glfw.git
