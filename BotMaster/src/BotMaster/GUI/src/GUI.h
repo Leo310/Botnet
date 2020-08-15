@@ -28,11 +28,15 @@ namespace GUI
 
 		void OnEvent(Event& e);
 
+		inline static GUI& Get() { return *s_Instance; }
+		inline Window& GetWindow() { return *window; };
+
 		inline bool IsRunning() const { return m_Running; };
 
 	private:
 		bool OnWindowClosed(WindowCloseEvent& e);
 
+		static GUI* s_Instance;
 		//Testing
 		PerspectiveCamera cam;
 

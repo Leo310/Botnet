@@ -3,6 +3,8 @@
 
 #include "BotMaster/Core/Base.h"
 
+#include "ImGui/ImGuiLayer.h"
+
 class ExampleLayer : public GUI::Layer
 {
 public:
@@ -27,8 +29,12 @@ namespace GUI
 
 #define BIND_EVENT_FN(x) std::bind(&GUI::x, this, std::placeholders::_1)
 
+	GUI* GUI::s_Instance = nullptr;
+
 	GUI::GUI(int width, int height, const char* name)
 	{
+		BM_ASSERT(!s_Instance, "GUI already exist");
+		s_Instance = this;
 		window.reset(Window::Create(WindowProperties(name, width, height, true)));
 		window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 	}
@@ -93,7 +99,11 @@ namespace GUI
 		rManage.reset(RecourceManager::Create());
 		rManage->LoadShader("src/BotMaster/GUI/assets/Shaders/Vertex.shader", "src/BotMaster/GUI/assets/Shaders/Fragment.shader", "test");
 
-		layerstack.PushLayer(new ExampleLayer());
+
+		//layerstack.PushLayer(new ExampleLayer());
+		ImGuiLayer* imgui = new ImGuiLayer();
+		imgui->Attach();
+		layerstack.PushOverlay(imgui);
 
 		return 1;
 	}

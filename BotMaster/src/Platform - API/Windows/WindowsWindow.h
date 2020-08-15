@@ -13,8 +13,8 @@ namespace GUI
 
 		virtual void Update() override;
 
-		virtual unsigned int getWidth() const override { return m_Data.Width; };
-		virtual unsigned int getHeight() const override { return m_Data.Height; };
+		virtual unsigned int GetWidth() const override { return m_Data.Width; };
+		virtual unsigned int GetHeight() const override { return m_Data.Height; };
 
 		virtual void SetEventCallback(const EventCallbackFn& callback) ;
 		virtual void SetVSync(bool enabled) override;
