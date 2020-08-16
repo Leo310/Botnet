@@ -29,6 +29,13 @@ project "BotMaster"
 	pchsource "%{prj.location}/src/BMpch.cpp"
 	pchheader "BMpch.h"
 
+	links
+	{
+		"GLFW",
+		"ImGUI",
+		"opengl32"
+	}
+
 	files
 	{
 		--"%{prj.location}/src/*.h",
@@ -74,11 +81,11 @@ project "BotMaster"
 
 	links
 	{
-		"glew32s.lib",
-		"imgui.lib",
-		"glfw3.lib",
-		"opengl32.lib",
-		"ws2_32.lib"
+		"glew32s",
+		"imgui",
+		"glfw3",
+		"opengl32",
+		"ws2_32"
 	}
 
 	filter "system:windows"
