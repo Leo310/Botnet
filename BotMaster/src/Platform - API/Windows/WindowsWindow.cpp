@@ -65,8 +65,8 @@ namespace GUI
 
 		if (s_GLFWwindowCount == 0)
 		{
-			int success = !glewInit();
-			BM_ASSERT(success, "Couldnt init GLEW");
+			int success = !gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+			BM_ASSERT(success, "Couldnt init Glad");
 		}
 		s_GLFWwindowCount++;
 

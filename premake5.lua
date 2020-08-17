@@ -13,6 +13,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 group "BM Dependencies"
 include "BotMaster/vendor/imgui"
 include "BotMaster/vendor/glfw"
+include "BotMaster/vendor/glad"
 
 group ""
 
@@ -33,6 +34,7 @@ project "BotMaster"
 	{
 		"GLFW",
 		"ImGUI",
+		"Glad",
 		"opengl32"
 	}
 
@@ -57,13 +59,13 @@ project "BotMaster"
 
 	includedirs
 	{
-		"%{wks.location}/BotMaster/vendor/GLEW/include",
 		"%{wks.location}/BotMaster/vendor/glfw/include",
 		"%{wks.location}/BotMaster/vendor/glm",
 		"%{wks.location}/BotMaster/vendor/spdlog/include",
 		"%{wks.location}/BotMaster/vendor/stb_image",
 		"%{wks.location}/BotMaster/vendor/imgui",
 		"%{wks.location}/BotMaster/src/BotMaster/GUI",
+		"%{wks.location}/BotMaster/vendor/glad/include",
 		"%{prj.location}/src"
 	}
 
@@ -71,21 +73,12 @@ project "BotMaster"
 	{
 		"%{wks.location}/BotMaster/vendor/glfw/bin/".. outputdir,
 		"%{wks.location}/BotMaster/vendor/imgui/bin/".. outputdir,
+		"%{wks.location}/BotMaster/vendor/glad/bin/".. outputdir,
 		"%{wks.location}/BotMaster/vendor/GLEW/lib/Release/Win32"
 	}
 
 	defines
 	{
-		"GLEW_STATIC"
-	}
-
-	links
-	{
-		"glew32s",
-		"imgui",
-		"glfw3",
-		"opengl32",
-		"ws2_32"
 	}
 
 	filter "system:windows"
