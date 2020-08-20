@@ -27,8 +27,6 @@ public:
 namespace GUI
 {
 
-#define BIND_EVENT_FN(x) std::bind(&GUI::x, this, std::placeholders::_1)
-
 	GUI* GUI::s_Instance = nullptr;
 
 	GUI::GUI(int width, int height, const char* name)
@@ -36,7 +34,7 @@ namespace GUI
 		BM_ASSERT(!s_Instance, "GUI already exist");
 		s_Instance = this;
 		window.reset(Window::Create(WindowProperties(name, width, height, true)));
-		window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		window->SetEventCallback(BIND_EVENT_FN(GUI::OnEvent));
 	}
 
 	GUI::~GUI()
@@ -154,7 +152,7 @@ namespace GUI
 	void GUI::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClosed));
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(GUI::OnWindowClosed));
 		//BM_LOG_TRACE("Core {0}", e.ToString());
 
 		for (auto it = layerstack.end(); it != layerstack.begin(); )
