@@ -7,6 +7,7 @@ workspace "Botnet"
 		"Release"
 	}
 
+	startproject "BotMaster"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 

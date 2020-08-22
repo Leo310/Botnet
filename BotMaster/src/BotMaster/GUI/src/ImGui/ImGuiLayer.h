@@ -3,6 +3,7 @@
 #include "src/Layer.h"
 #include "src/Events/KeyEvent.h"
 #include "src/Events/MouseEvent.h"
+#include "src/Events/ApplicationEvent.h"
 
 
 namespace GUI
