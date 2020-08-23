@@ -19,6 +19,8 @@ namespace GUI
 		virtual void SetEventCallback(const EventCallbackFn& callback) ;
 		virtual void SetVSync(bool enabled) override;
 		virtual bool IsVSync() const override;
+
+		virtual void* GetNativeWindow() const override { return m_Window; }
 	private:
 		void Init(const WindowProperties& props);
 		void Shutdown();

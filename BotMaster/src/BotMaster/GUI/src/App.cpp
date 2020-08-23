@@ -13,7 +13,7 @@ int main()
 
 	while (gui.IsRunning())
 	{
-		//gui.update();
+		gui.Update();
 		gui.Render();
 
 	}
