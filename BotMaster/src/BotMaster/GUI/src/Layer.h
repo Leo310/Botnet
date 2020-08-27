@@ -13,6 +13,7 @@ namespace GUI
 		virtual void Attach() {}
 		virtual void Detach() {}
 		virtual void Update() {}
+		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}
 
 		inline const std::string& GetName() const { return m_DebugName; }

@@ -3,7 +3,6 @@
 
 #include "BotMaster/Core/Base.h"
 
-#include "ImGui/ImGuiLayer.h"
 #include "Input.h"
 
 class ExampleLayer : public GUI::Layer
@@ -36,6 +35,7 @@ namespace GUI
 		s_Instance = this;
 		window.reset(Window::Create(WindowProperties(name, width, height, true)));
 		window->SetEventCallback(BIND_EVENT_FN(GUI::OnEvent));
+		imGuiLayer = new ImGuiLayer();
 	}
 
 	GUI::~GUI()
@@ -100,10 +100,8 @@ namespace GUI
 
 
 		//layerstack.PushLayer(new ExampleLayer());
-		ImGuiLayer* imgui = new ImGuiLayer();
-		imgui->Attach();
-		layerstack.PushOverlay(imgui);
-
+		layerstack.PushLayer(imGuiLayer);
+		imGuiLayer->Attach();
 		return 1;
 	}
 
@@ -147,6 +145,12 @@ namespace GUI
 			layer->Update();
 		rManage->GetShader("test")->Bind();
 		GLCall(glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, 0));
+
+		imGuiLayer->Begin();
+		for (Layer* layer : layerstack)
+			layer->OnImGuiRender();
+		imGuiLayer->End();
+
 		window->Update(); 
 	}
 

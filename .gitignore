@@ -6,3 +6,5 @@ bin-int/
 *.vcxproj
 *.user
 *.filters
+
+BotMaster/imgui.ini

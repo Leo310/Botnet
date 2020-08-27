@@ -14,6 +14,9 @@
 
 #include "LayerStack.h"
 
+#include "ImGui/ImGuiLayer.h"
+
+
 namespace GUI
 {
 	class GUI
@@ -43,6 +46,7 @@ namespace GUI
 		bool m_Running = true;
 
 		LayerStack layerstack;
+		ImGuiLayer* imGuiLayer;
 
 		std::unique_ptr<Window> window;
 		std::unique_ptr<VertexBuffer> vertexBuffer;
