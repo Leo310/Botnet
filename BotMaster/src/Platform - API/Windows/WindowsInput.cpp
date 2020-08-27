@@ -10,13 +10,13 @@ namespace GUI
     bool WindowsInput::IsKeyPressedImpl(KeyCode keyCode)
     {
         auto window = static_cast<GLFWwindow*>(GUI::Get().GetWindow().GetNativeWindow());
-        auto state = glfwGetKey(window, static_cast<int>(keyCode));
+        auto state = glfwGetKey(window, keyCode);
         return state == GLFW_PRESS || state == GLFW_REPEAT;
     }
     bool WindowsInput::IsMouseButtonPressedImpl(MouseCode mouseCode)
     {
         auto window = static_cast<GLFWwindow*>(GUI::Get().GetWindow().GetNativeWindow());
-        auto state = glfwGetMouseButton(window, static_cast<int>(mouseCode));
+        auto state = glfwGetMouseButton(window, mouseCode);
         return state == GLFW_PRESS;
     }
     std::pair<float, float> WindowsInput::GetMousePosImpl()

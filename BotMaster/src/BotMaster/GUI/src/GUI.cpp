@@ -109,8 +109,6 @@ namespace GUI
 
 	void GUI::Update()
 	{
-		auto [x, y] = Input::GetMousePos();
-		BM_LOG_TRACE("{0}, {1}", x, y);
 		float time = glfwGetTime();
 		deltaTime = time - lastTime;
 		lastTime = time;
