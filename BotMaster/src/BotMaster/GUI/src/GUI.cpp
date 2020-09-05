@@ -36,6 +36,7 @@ namespace GUI
 		window.reset(Window::Create(WindowProperties(name, width, height, true)));
 		window->SetEventCallback(BIND_EVENT_FN(GUI::OnEvent));
 		imGuiLayer = new ImGuiLayer();
+		guiLayer = new GuiLayer();
 	}
 
 	GUI::~GUI()
@@ -102,6 +103,7 @@ namespace GUI
 		//layerstack.PushLayer(new ExampleLayer());
 		layerstack.PushLayer(imGuiLayer);
 		imGuiLayer->Attach();
+		layerstack.PushLayer(guiLayer);
 		return 1;
 	}
 
