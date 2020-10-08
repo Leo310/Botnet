@@ -35,7 +35,7 @@ namespace GUI
 		inline Window& GetWindow() { return *window; };
 
 		inline bool IsRunning() const { return m_Running; };
-
+		inline GuiLayer* GetGuiLayer() const { return guiLayer; };
 	private:
 		bool OnWindowClosed(WindowCloseEvent& e);
 

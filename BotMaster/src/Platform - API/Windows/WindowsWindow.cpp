@@ -41,7 +41,7 @@ namespace GUI
 			m_Data.VSync = props.VSync;
 
 			int success = glfwInit();
-			BM_ASSERT(success, "Couldnt inít GLFW");
+			BM_ASSERT(success, "Couldnt init GLFW");
 
 			BM_LOG_INFO("Init GLFW");
 
@@ -60,8 +60,8 @@ namespace GUI
 		m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str(), NULL, NULL);
 		BM_ASSERT(m_Window, "Window couldnt be created");
 		BM_LOG_INFO("Created window {0} ({1}, {2})", m_Data.Title, m_Data.Width, m_Data.Height);
-		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, &m_Data);
+		glfwMakeContextCurrent(m_Window);
 
 		if (s_GLFWwindowCount == 0)
 		{

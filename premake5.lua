@@ -12,9 +12,9 @@ workspace "Botnet"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 group "BM Dependencies"
+include "BotMaster/vendor/glad"
 include "BotMaster/vendor/imgui"
 include "BotMaster/vendor/glfw"
-include "BotMaster/vendor/glad"
 
 group ""
 
@@ -33,10 +33,11 @@ project "BotMaster"
 
 	links
 	{
+		"Glad",
 		"GLFW",
 		"ImGUI",
-		"Glad",
-		"opengl32"
+		"opengl32",
+		"ws2_32"
 	}
 
 	files
@@ -46,14 +47,8 @@ project "BotMaster"
 		"%{prj.location}/vendor/glm/**.hpp",
 		"%{prj.location}/vendor/stb_image/**.h",
 		"%{prj.location}/vendor/stb_image/**.cpp",
-		"%{prj.location}/src/Platform - API/**.h",
-		"%{prj.location}/src/Platform - API/**.cpp",
-		"%{prj.location}/src/BotMaster/GUI/src/**.cpp",
-		"%{prj.location}/src/BotMaster/GUI/src/**.h",
-		"%{prj.location}/src/BotMaster/Core/**.cpp",
-		"%{prj.location}/src/BotMaster/Core/**.h",
-		"%{prj.location}/src/BMpch.cpp",
-		"%{prj.location}/src/BMpch.h",
+		"%{prj.location}/src/**.h",
+		"%{prj.location}/src/**.cpp",
 		"**.shader"
 	}
 	
@@ -74,8 +69,7 @@ project "BotMaster"
 	{
 		"%{wks.location}/BotMaster/vendor/glfw/bin/".. outputdir,
 		"%{wks.location}/BotMaster/vendor/imgui/bin/".. outputdir,
-		"%{wks.location}/BotMaster/vendor/glad/bin/".. outputdir,
-		"%{wks.location}/BotMaster/vendor/GLEW/lib/Release/Win32"
+		"%{wks.location}/BotMaster/vendor/glad/bin/".. outputdir
 	}
 
 	defines

@@ -1,11 +1,5 @@
 #pragma once
 
-#include <WS2tcpip.h>
-
-#include <string>
-#include <iostream>
-
-
 class Client
 {
 public:

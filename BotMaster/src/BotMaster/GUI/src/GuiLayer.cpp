@@ -23,7 +23,8 @@ namespace GUI
 		bool show = true;
 		ImGui::Begin("States");
 		if (ImGui::Button("DDos"))
-			BM_LOG_INFO("DDOS");
+			DDoS = true;
+
 		ImGui::End();
 		ImGui::ShowDemoWindow(&show);
 	}
