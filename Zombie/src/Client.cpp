@@ -58,9 +58,9 @@ bool Client::closeConnection2()
 	return !closesocket(m_Client);
 }
 
-bool Client::sendToSrv(const char* msg, int size)
+bool Client::sendToSrv(const Packet& packet)
 {
-	int sended = send(m_Client, msg, size, 0);
+	int sended = send(m_Client, packet.body.data, packet.header.size + 9, 0);	
 	if (sended == SOCKET_ERROR)
 		return false;
 	return true;
@@ -68,9 +68,9 @@ bool Client::sendToSrv(const char* msg, int size)
 
 bool Client::receiveFromServer()
 {
-	SecureZeroMemory(m_Buf, sizeof(m_Buf));
-	int received = recv(m_Client, m_Buf, sizeof(m_Buf), 0);
-	if (received == SOCKET_ERROR)	//received == 0 means that the connection got closedgracefully
+	char buf[MAX_PACKET_SIZE];
+	int received = recv(m_Client, buf, sizeof(buf), 0);
+	if (received == SOCKET_ERROR)	//received == 0 means that the connection got closed gracefully
 	{
 		std::cout << "SOCKET ERROR" << WSAGetLastError() << std::endl;
 		return false;
@@ -80,10 +80,11 @@ bool Client::receiveFromServer()
 		std::cout << "Disconnected succesfully" << std::endl;
 		return false;
 	}
+	m_RcvdPacket = Packet::Pack(buf);
 	return true;
 }
 
-const char* Client::getSrvMsg()
+const Packet* Client::getSrvPacket()
 {
-	return m_Buf;
+	return &m_RcvdPacket;
 }

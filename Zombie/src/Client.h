@@ -3,6 +3,8 @@
 #include <WS2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
 
+#include "Packet.h"
+
 #include <string>
 #include <iostream>
 
@@ -21,14 +23,14 @@ public:
 	void closeConnection1();
 	bool closeConnection2();
 
-	bool sendToSrv(const char* msg, int size);
+	bool sendToSrv(const Packet& packet);
 	
 	bool receiveFromServer();
-	const char* getSrvMsg();
+	const Packet* getSrvPacket();
 
 private:
 	SOCKET m_Client;
 
+	Packet m_RcvdPacket;
 	bool m_RcvdMsg = false;
-	char m_Buf[4096];
 };
